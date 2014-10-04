@@ -1,26 +1,25 @@
 (function() {
   var httpRequest,
       getById = document.getElementById;
+
   function makeRequest(url) {
-    if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-      httpRequest = new XMLHttpRequest();
-    } else if (window.ActiveXObject) { // IE
+    var factory = [
+      [window.XMLHttpRequest, undefined],
+      [window.ActiveXObject, "Msxml2.XMLHTTP"],
+      [window.ActiveXObject, "Microsoft.XMLHTTP"]
+    ];
+    for (var i = 0; i < factory.length; i++) {
       try {
-        httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-      } 
-      catch (e) {
-        try {
-          httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-        } 
-        catch (e) {}
-      }
+        httpRequest = new factory[i][0](factory[i][1]);
+        httpRequest.onreadystatechange = alertContents;
+        httpRequest.open('GET', url);
+        httpRequest.setRequestHeader ("Authorization", "Client-ID cc01e3195c1adc2");
+        httpRequest.send();
+        return;
+      } catch(e) {}
     }
-    if (!httpRequest) {return false;}
-    httpRequest.onreadystatechange = alertContents;
-    httpRequest.open('GET', url);
-    httpRequest.setRequestHeader ("Authorization", "Client-ID cc01e3195c1adc2");
-    httpRequest.send();
   }
+
   function alertContents() {
     if (httpRequest.readyState === 4) {
       if (httpRequest.status === 200) {
@@ -31,10 +30,9 @@
                 img.src = respa.data[x].link;
                 photosect.appendChild(img);
         }
-      } else {
-        return false;
       }
     }
   }
+
   makeRequest('https://api.imgur.com/3/gallery/r/nsfw/');
 })();
