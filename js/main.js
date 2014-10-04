@@ -1,5 +1,6 @@
 (function() {
-  var httpRequest;
+  var httpRequest,
+      getById = document.getElementById;
   function makeRequest(url) {
     if (window.XMLHttpRequest) { // Mozilla, Safari, ...
       httpRequest = new XMLHttpRequest();
@@ -23,9 +24,9 @@
   function alertContents() {
     if (httpRequest.readyState === 4) {
       if (httpRequest.status === 200) {
-        var respa =JSON.parse(httpRequest.responseText);
-        var photosect = document.getElementById('photos');
-        for (x in respa.data ){  
+        var respa = JSON.parse(httpRequest.responseText);
+        var photosect = getById('photos');
+        for (var x in respa.data ){  
                 var img = document.createElement("img");
                 img.src = respa.data[x].link;
                 photosect.appendChild(img);
